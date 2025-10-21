@@ -6,8 +6,8 @@ cd /d "%~dp0"
 
 :: Set path to your image and parameters
 set "IMAGE_PATH=input.jpg"
-set "TARGET_WIDTH=600"
-set "TARGET_HEIGHT=300"
+set "TARGET_WIDTH=200"
+set "TARGET_HEIGHT=200"
 set "METHOD=dp"
 
 :: Run the program using full path to executable
