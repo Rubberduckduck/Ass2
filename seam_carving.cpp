@@ -314,7 +314,7 @@ public:
 int main(int argc, char** argv) {
     if (argc < 4) {
         std::cout << "Usage: " << argv[0] << " <input_image> <target_width> <target_height> [method]" << std::endl;
-        std::cout << "Method: 'dp' (default) or 'greedy'" << std::endl;
+        std::cout << "Method: 'dp' (default) or 'gp (greedy programming)'" << std::endl;
         return -1;
     }
     
@@ -335,7 +335,7 @@ int main(int argc, char** argv) {
     
     // Validate target dimensions
     if (targetWidth > image.cols || targetHeight > image.rows) {
-        cout << "Error: Target dimensions must be smaller than original" << std::endl;
+        std::cout << "Error: Target dimensions must be smaller than original" << std::endl;
         return -1;
     }
     
@@ -348,7 +348,7 @@ int main(int argc, char** argv) {
     
     auto start = std::chrono::high_resolution_clock::now();
     
-    if (method == "greedy") {
+    if (method == "gp") {
         std::cout << "\nUsing Greedy Algorithm..." << std::endl;
         result = carver.resize(targetWidth, targetHeight, false, false);
     } else {

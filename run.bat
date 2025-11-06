@@ -8,7 +8,12 @@ cd /d "%~dp0"
 set "IMAGE_PATH=input.jpg"
 set "TARGET_WIDTH=200"
 set "TARGET_HEIGHT=200"
-set "METHOD=dp"
+:: Check if method argument is provided, else default to dp
+if "%1"=="" (
+    set "METHOD=dp"
+) else (
+    set "METHOD=%1"
+)
 
 :: Run the program using full path to executable
 .\build\Release\seam_carving.exe "%IMAGE_PATH%" %TARGET_WIDTH% %TARGET_HEIGHT% %METHOD%
