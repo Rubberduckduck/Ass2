@@ -5,17 +5,17 @@
 #include <limits>
 #include <algorithm>
 #include <chrono>
+#include <string>
 
 using namespace cv;
-using namespace std;
 
 class SeamCarver {
 private:
-    Mat image;
+    cv::Mat image;
     
     // Calculate energy map using gradient magnitude
-    Mat calculateEnergyMap(const Mat& img) {
-        Mat gray, gradX, gradY, absGradX, absGradY, energy;
+    cv::Mat calculateEnergyMap(const cv::Mat& img) {
+        cv::Mat gray, gradX, gradY, absGradX, absGradY, energy;
         
         // Convert to grayscale if needed
         if (img.channels() == 3) {
@@ -40,13 +40,13 @@ private:
     }
     
     // Find vertical seam using Dynamic Programming
-    vector<int> findVerticalSeamDP(const Mat& energy) {
+    std::vector<int> findVerticalSeamDP(const cv::Mat& energy) {
         int rows = energy.rows;
         int cols = energy.cols;
         
         // DP table - we only need current and previous row
-        vector<double> prev(cols), curr(cols);
-        vector<vector<int>> parent(rows, vector<int>(cols));
+        std::vector<double> prev(cols), curr(cols);
+        std::vector<std::vector<int>> parent(rows, std::vector<int>(cols));
         
         // Initialize first row
         for (int j = 0; j < cols; j++) {
@@ -54,28 +54,27 @@ private:
         }
         
         // Fill DP table
-        for (int i = 1; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                double minEnergy = prev[j];
+        for (int i = 1; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                // Center, left, right
+                const int offsets[] = {-1, 0, 1}; 
+                double minEnergy = std::numeric_limits<double>::max();
                 int minIdx = j;
-                
-                // Check left diagonal
-                if (j > 0 && prev[j-1] < minEnergy) {
-                    minEnergy = prev[j-1];
-                    minIdx = j-1;
+                for (int d : offsets) {
+                    int prevCol = j + d;
+                    if (prevCol >= 0 && prevCol < cols) {
+                        if (prev[prevCol] < minEnergy) {
+                            minEnergy = prev[prevCol];
+                            minIdx = prevCol;
+                        }
+                    }
                 }
-                
-                // Check right diagonal
-                if (j < cols-1 && prev[j+1] < minEnergy) {
-                    minEnergy = prev[j+1];
-                    minIdx = j+1;
-                }
-                
                 curr[j] = energy.at<double>(i, j) + minEnergy;
                 parent[i][j] = minIdx;
             }
-            swap(prev, curr);
+            std::swap(prev, curr);
         }
+
         
         // Find minimum in last row
         int minCol = 0;
@@ -88,7 +87,7 @@ private:
         }
         
         // Backtrack to find seam
-        vector<int> seam(rows);
+        std::vector<int> seam(rows);
         seam[rows-1] = minCol;
         for (int i = rows-2; i >= 0; i--) {
             seam[i] = parent[i+1][seam[i+1]];
@@ -98,10 +97,10 @@ private:
     }
     
     // Find vertical seam using Greedy Algorithm
-    vector<int> findVerticalSeamGreedy(const Mat& energy) {
+    std::vector<int> findVerticalSeamGreedy(const cv::Mat& energy) {
         int rows = energy.rows;
         int cols = energy.cols;
-        vector<int> seam(rows);
+        std::vector<int> seam(rows);
         
         // Start from minimum energy in first row
         double minEnergy = energy.at<double>(0, 0);
@@ -139,10 +138,10 @@ private:
     }
     
     // Remove vertical seam from image
-    Mat removeVerticalSeam(const Mat& img, const vector<int>& seam) {
+    cv::Mat removeVerticalSeam(const cv::Mat& img, const std::vector<int>& seam) {
         int rows = img.rows;
         int cols = img.cols;
-        Mat result(rows, cols-1, img.type());
+        cv::Mat result(rows, cols-1, img.type());
         
         for (int i = 0; i < rows; i++) {
             int seamCol = seam[i];
@@ -168,8 +167,8 @@ private:
     }
     
     // Visualize seam on image
-    Mat visualizeSeam(const Mat& img, const vector<int>& seam, bool isVertical = true) {
-        Mat vis = img.clone();
+    cv::Mat visualizeSeam(const cv::Mat& img, const std::vector<int>& seam, bool isVertical = true) {
+        cv::Mat vis = img.clone();
         
         if (isVertical) {
             for (int i = 0; i < seam.size(); i++) {
@@ -185,21 +184,21 @@ private:
     }
     
     // Find horizontal seam (transpose, find vertical, transpose back)
-    vector<int> findHorizontalSeamDP(const Mat& energy) {
-        Mat transposed;
+    std::vector<int> findHorizontalSeamDP(const cv::Mat& energy) {
+        cv::Mat transposed;
         transpose(energy, transposed);
         return findVerticalSeamDP(transposed);
     }
     
-    vector<int> findHorizontalSeamGreedy(const Mat& energy) {
-        Mat transposed;
+    std::vector<int> findHorizontalSeamGreedy(const cv::Mat& energy) {
+        cv::Mat transposed;
         transpose(energy, transposed);
         return findVerticalSeamGreedy(transposed);
     }
     
     // Remove horizontal seam
-    Mat removeHorizontalSeam(const Mat& img, const vector<int>& seam) {
-        Mat transposed, result;
+    cv::Mat removeHorizontalSeam(const cv::Mat& img, const std::vector<int>& seam) {
+        cv::Mat transposed, result;
         transpose(img, transposed);
         result = removeVerticalSeam(transposed, seam);
         transpose(result, result);
@@ -207,21 +206,21 @@ private:
     }
 
 public:
-    SeamCarver(const Mat& img) : image(img.clone()) {}
+    SeamCarver(const cv::Mat& img) : image(img.clone()) {}
     
     // Resize image by removing vertical seams using DP
-    Mat resizeVerticalDP(int targetWidth, bool visualize = false) {
-        Mat result = image.clone();
+    cv::Mat resizeVerticalDP(int targetWidth, bool visualize = false) {
+        cv::Mat result = image.clone();
         int seamsToRemove = image.cols - targetWidth;
         
-        cout << "Removing " << seamsToRemove << " vertical seams using DP..." << endl;
+        std::cout << "Removing " << seamsToRemove << " vertical seams using DP..." << std::endl;
         
         for (int i = 0; i < seamsToRemove; i++) {
-            Mat energy = calculateEnergyMap(result);
-            vector<int> seam = findVerticalSeamDP(energy);
+            cv::Mat energy = calculateEnergyMap(result);
+            std::vector<int> seam = findVerticalSeamDP(energy);
             
             if (visualize && i % (seamsToRemove/10 + 1) == 0) {
-                Mat vis = visualizeSeam(result, seam, true);
+                cv::Mat vis = visualizeSeam(result, seam, true);
                 imshow("Seam Visualization", vis);
                 waitKey(100);
             }
@@ -229,7 +228,7 @@ public:
             result = removeVerticalSeam(result, seam);
             
             if ((i+1) % 10 == 0 || i == seamsToRemove-1) {
-                cout << "Progress: " << (i+1) << "/" << seamsToRemove << endl;
+                std::cout << "Progress: " << (i+1) << "/" << seamsToRemove << std::endl;
             }
         }
         
@@ -237,19 +236,19 @@ public:
     }
     
     // Resize image by removing vertical seams using Greedy
-    Mat resizeVerticalGreedy(int targetWidth) {
-        Mat result = image.clone();
+    cv::Mat resizeVerticalGreedy(int targetWidth) {
+        cv::Mat result = image.clone();
         int seamsToRemove = image.cols - targetWidth;
         
-        cout << "Removing " << seamsToRemove << " vertical seams using Greedy..." << endl;
+        std::cout << "Removing " << seamsToRemove << " vertical seams using Greedy..." << std::endl;
         
         for (int i = 0; i < seamsToRemove; i++) {
-            Mat energy = calculateEnergyMap(result);
-            vector<int> seam = findVerticalSeamGreedy(energy);
+            cv::Mat energy = calculateEnergyMap(result);
+            std::vector<int> seam = findVerticalSeamGreedy(energy);
             result = removeVerticalSeam(result, seam);
             
             if ((i+1) % 10 == 0 || i == seamsToRemove-1) {
-                cout << "Progress: " << (i+1) << "/" << seamsToRemove << endl;
+                std::cout << "Progress: " << (i+1) << "/" << seamsToRemove << std::endl;
             }
         }
         
@@ -257,18 +256,18 @@ public:
     }
     
     // Resize image by removing horizontal seams using DP
-    Mat resizeHorizontalDP(int targetHeight, bool visualize = false) {
-        Mat result = image.clone();
+    cv::Mat resizeHorizontalDP(int targetHeight, bool visualize = false) {
+        cv::Mat result = image.clone();
         int seamsToRemove = image.rows - targetHeight;
         
-        cout << "Removing " << seamsToRemove << " horizontal seams using DP..." << endl;
+        std::cout << "Removing " << seamsToRemove << " horizontal seams using DP..." << std::endl;
         
         for (int i = 0; i < seamsToRemove; i++) {
-            Mat energy = calculateEnergyMap(result);
-            vector<int> seam = findHorizontalSeamDP(energy);
+            cv::Mat energy = calculateEnergyMap(result);
+            std::vector<int> seam = findHorizontalSeamDP(energy);
             
             if (visualize && i % (seamsToRemove/10 + 1) == 0) {
-                Mat vis = visualizeSeam(result, seam, false);
+                cv::Mat vis = visualizeSeam(result, seam, false);
                 imshow("Seam Visualization", vis);
                 waitKey(100);
             }
@@ -276,7 +275,7 @@ public:
             result = removeHorizontalSeam(result, seam);
             
             if ((i+1) % 10 == 0 || i == seamsToRemove-1) {
-                cout << "Progress: " << (i+1) << "/" << seamsToRemove << endl;
+                std::cout << "Progress: " << (i+1) << "/" << seamsToRemove << std::endl;
             }
         }
         
@@ -284,8 +283,8 @@ public:
     }
     
     // Resize both dimensions
-    Mat resize(int targetWidth, int targetHeight, bool useDP = true, bool visualize = false) {
-        Mat result = image.clone();
+    cv::Mat resize(int targetWidth, int targetHeight, bool useDP = true, bool visualize = false) {
+        cv::Mat result = image.clone();
         
         // Remove vertical seams first
         if (targetWidth < image.cols) {
@@ -314,29 +313,29 @@ public:
 
 int main(int argc, char** argv) {
     if (argc < 4) {
-        cout << "Usage: " << argv[0] << " <input_image> <target_width> <target_height> [method]" << endl;
-        cout << "Method: 'dp' (default) or 'greedy'" << endl;
+        std::cout << "Usage: " << argv[0] << " <input_image> <target_width> <target_height> [method]" << std::endl;
+        std::cout << "Method: 'dp' (default) or 'greedy'" << std::endl;
         return -1;
     }
     
-    string inputPath = argv[1];
-    int targetWidth = stoi(argv[2]);
-    int targetHeight = stoi(argv[3]);
-    string method = (argc > 4) ? argv[4] : "dp";
+    std::string inputPath = argv[1];
+    int targetWidth = std::stoi(argv[2]);
+    int targetHeight = std::stoi(argv[3]);
+    std::string method = (argc > 4) ? argv[4] : "dp";
     
     // Load image
-    Mat image = imread(inputPath);
+    cv::Mat image = imread(inputPath);
     if (image.empty()) {
-        cout << "Error: Could not load image " << inputPath << endl;
+        std::cout << "Error: Could not load image " << inputPath << std::endl;
         return -1;
     }
     
-    cout << "Original size: " << image.cols << "x" << image.rows << endl;
-    cout << "Target size: " << targetWidth << "x" << targetHeight << endl;
+    std::cout << "Original size: " << image.cols << "x" << image.rows << std::endl;
+    std::cout << "Target size: " << targetWidth << "x" << targetHeight << std::endl;
     
     // Validate target dimensions
     if (targetWidth > image.cols || targetHeight > image.rows) {
-        cout << "Error: Target dimensions must be smaller than original" << endl;
+        cout << "Error: Target dimensions must be smaller than original" << std::endl;
         return -1;
     }
     
@@ -345,34 +344,34 @@ int main(int argc, char** argv) {
     
     // Perform seam carving
     SeamCarver carver(image);
-    Mat result;
+    cv::Mat result;
     
-    auto start = chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
     
     if (method == "greedy") {
-        cout << "\nUsing Greedy Algorithm..." << endl;
+        std::cout << "\nUsing Greedy Algorithm..." << std::endl;
         result = carver.resize(targetWidth, targetHeight, false, false);
     } else {
-        cout << "\nUsing Dynamic Programming..." << endl;
+        std::cout << "\nUsing Dynamic Programming..." << std::endl;
         result = carver.resize(targetWidth, targetHeight, true, false);
     }
     
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     
-    cout << "\nProcessing completed in " << duration.count() << " ms" << endl;
-    cout << "Result size: " << result.cols << "x" << result.rows << endl;
+    std::cout << "\nProcessing completed in " << duration.count() << " ms" << std::endl;
+    std::cout << "Result size: " << result.cols << "x" << result.rows << std::endl;
     
     // Display result
     imshow("Seam Carved Image", result);
     
     // Save result
-    string outputPath = "output_" + method + ".jpg";
+    std::string outputPath = "output_" + method + ".jpg";
     imwrite(outputPath, result);
-    cout << "Result saved to: " << outputPath << endl;
+    std::cout << "Result saved to: " << outputPath << std::endl;
     
     // Compare with simple scaling
-    Mat scaled;
+    cv::Mat scaled;
     resize(image, scaled, Size(targetWidth, targetHeight));
     imshow("Simple Scaling (for comparison)", scaled);
     imwrite("output_scaled.jpg", scaled);
