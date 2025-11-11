@@ -1,0 +1,23 @@
+name: Seam Carving Compressing
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: 
+      - main
+
+jobs:
+    build-windows:
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: "Clean Windows"
+              run: .\clean.bat
+            - name: "Build Windows"
+              run: .\build.bat  
+            - name: "Run Project"
+              run: .\run.bat
