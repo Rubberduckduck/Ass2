@@ -11,13 +11,30 @@ on:
       - master
 
 jobs:
-    build-windows:
-        runs-on: windows-latest
-        steps:
-            - uses: actions/checkout@v3
-            - name: "Clean Windows"
-              run: .\clean.bat
-            - name: "Build Windows"
-              run: .\build.bat  
-            - name: "Run Project"
-              run: .\run.bat
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+      
+      - name: Install OpenCV
+        run: |
+          vcpkg install opencv:x64-windows
+          vcpkg integrate install
+      
+      - name: Configure with CMake
+        run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+      
+      - name: Build
+        run: cmake --build build --config Release
+      
+      - name: "Clean Windows"
+        run: .\clean.bat
+      
+      - name: "Build Windows"
+        run: .\build.bat
+      
+      - name: "Run Project"
+        run: .\run.bat
