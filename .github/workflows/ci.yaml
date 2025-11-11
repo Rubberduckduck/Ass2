@@ -19,13 +19,8 @@ jobs:
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
       
-      - name: Install OpenCV
-        run: |
-          vcpkg install opencv:x64-windows
-          vcpkg integrate install
-      
       - name: Configure with CMake
-        run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+        run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
       
       - name: Build
         run: cmake --build build --config Release
@@ -38,3 +33,4 @@ jobs:
       
       - name: "Run Project"
         run: .\run.bat
+
