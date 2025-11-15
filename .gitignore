@@ -88,3 +88,6 @@ out*/
 *.tmp
 *.bak
 *.swp
+/vcpkg/
+/vcpkg_installed/
+

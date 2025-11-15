@@ -1,20 +1,11 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.22)
 project(SeamCarving)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Explicitly set OpenCV path (adjust if your path is different)
-set(OpenCV_DIR "C:/opencv/build")
-
-# Find OpenCV - try different versions
-find_package(OpenCV 4 QUIET)
-if(NOT OpenCV_FOUND)
-    find_package(OpenCV 3 QUIET)
-endif()
-if(NOT OpenCV_FOUND)
-    find_package(OpenCV REQUIRED)
-endif()
+find_package(OpenCV REQUIRED)
 
 message(STATUS "OpenCV version: ${OpenCV_VERSION}")
 message(STATUS "OpenCV include dirs: ${OpenCV_INCLUDE_DIRS}")

@@ -29,11 +29,15 @@ if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 pushd "%BUILD_DIR%"
 
 echo Configuring project (Config=%CONFIG% Generator=%GEN%)...
+
+set "VCPKG_TOOLCHAIN=%~dp0vcpkg\scripts\buildsystems\vcpkg.cmake"
+
 if "%GEN%"=="" (
-  cmake -DCMAKE_BUILD_TYPE=%CONFIG% ..
+    cmake -DCMAKE_BUILD_TYPE=%CONFIG% -DCMAKE_TOOLCHAIN_FILE="%VCPKG_TOOLCHAIN%" ..
 ) else (
-  cmake -G "%GEN%" -DCMAKE_BUILD_TYPE=%CONFIG% ..
+    cmake -G "%GEN%" -DCMAKE_BUILD_TYPE=%CONFIG% -DCMAKE_TOOLCHAIN_FILE="%VCPKG_TOOLCHAIN%" ..
 )
+
 if %errorlevel% neq 0 (
   echo.
   echo ================================

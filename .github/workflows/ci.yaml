@@ -1,4 +1,5 @@
 name: Seam Carving Compressing
+
 permissions:
   contents: read
 
@@ -7,15 +8,17 @@ on:
     branches:
       - master
   pull_request:
-    branches: 
+    branches:
       - master
 
 jobs:
   build-windows:
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v3
 
+      # Optional: Cache vcpkg installed binaries for faster rebuilds
       - name: Cache vcpkg binaries
         uses: actions/cache@v3
         with:
@@ -25,22 +28,23 @@ jobs:
           key: vcpkg-${{ runner.os }}-${{ hashFiles('**/vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-
-      
+
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
-      
-      - name: Configure with CMake
-        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-      
-      - name: Build
-        run: cmake --build build --config Release
-      
-      - name: "Clean Windows"
-        run: .\clean.bat
-      
-      - name: "Build Windows"
-        run: .\build.bat
-      
-      - name: "Run Project"
-        run: .\run.bat
 
+      - name: Configure with CMake
+        run: |
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 ^
+            -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Run Project
+        run: build\Release\seam_carving.exe # <-- change "seam_carving.exe" if your target name is different
+
+      # Optional: clean/build/run scripts, only if you need them for extras
+      # - name: "Clean Windows"
+      #   run: .\clean.bat
+      # - name: "Run custom build script"
+      #   run: .\build.bat

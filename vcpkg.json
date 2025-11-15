@@ -2,7 +2,8 @@
   "name": "seam-carving",
   "version": "1.0.0",
   "dependencies": [
+    "pkgconf",
     "opencv"
   ],
-  "builtin-baseline": "74e6536215718009aae747d86d84b78376bf9e09"
+  "builtin-baseline": "dce593dde6a57cdb75f14c5dd33d21915057457a"
 }
