@@ -20,7 +20,7 @@ It uses modern CMake and vcpkg for dependency management—**no manual OpenCV in
 
 ### 1. Clone the Project
 
-```sh
+```powershell
 git clone https://github.com/Rubberduckduck/AlgoAss2.git
 cd AlgoAss2
 ```
@@ -29,7 +29,7 @@ cd AlgoAss2
 
 If you haven't installed vcpkg yet:
 
-```sh
+```powershell
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg
@@ -43,7 +43,7 @@ Return to the `AlgoAss2` folder when done.
 
 Simply run the provided batch file:
 
-```sh
+```powershell
 ./build.bat
 ```
 This will configure and build the project with CMake and vcpkg.
@@ -52,7 +52,7 @@ This will configure and build the project with CMake and vcpkg.
 
 After building, start the program using:
 
-```sh
+```powershell
 ./run.bat
 ```
 The application will prompt you for any required user input.

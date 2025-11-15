@@ -18,7 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Optional: Cache vcpkg installed binaries for faster rebuilds
       - name: Cache vcpkg binaries
         uses: actions/cache@v3
         with:
@@ -39,7 +38,7 @@ jobs:
         run: cmake --build build --config Release --parallel
 
       - name: Run Project
-        run: build\Release\seam_carving.exe # <-- change "seam_carving.exe" if your target name is different
+        run: build\Release\seam_carving.exe 
 
       # Optional: clean/build/run scripts, only if you need them for extras
       # - name: "Clean Windows"
