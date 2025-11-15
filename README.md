@@ -2,7 +2,7 @@
 # Seam Carving Compressing - Build Guide
 
 This project is maintained at [Rubberduckduck/AlgoAss2](https://github.com/Rubberduckduck/AlgoAss2).
-It uses modern CMake and vcpkg for dependency management—**no manual OpenCV installation required!**
+It uses modern CMake and vcpkg for dependency management: **no manual OpenCV installation required!**
 
 ---
 
@@ -18,6 +18,9 @@ It uses modern CMake and vcpkg for dependency management—**no manual OpenCV in
 
 ## Getting Started
 
+> **All commands below should be run in a Windows PowerShell window.**
+> You can open PowerShell from the Start menu, or type `powershell` in the search bar.
+
 ### 1. Clone the Project
 
 ```powershell
@@ -32,7 +35,7 @@ If you haven't installed vcpkg yet:
 ```powershell
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg
-./bootstrap-vcpkg
+./bootstrap-vcpkg.bat
 ```
 
 *(You only need to do this once per machine!)*
@@ -69,11 +72,10 @@ The application will prompt you for any required user input.
 ## Developer Notes
 
 - The build system uses `CMakeLists.txt`, so advanced users can also build manually:
-  ```sh
+  ```powershell
   cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake
   cmake --build build --config Release
   ```
-
 - If you add dependencies, update `vcpkg.json` and rerun `vcpkg install`.
 
 ---
