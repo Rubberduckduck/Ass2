@@ -27,34 +27,19 @@ cd AlgoAss2
 
 ### 2. Get vcpkg
 
-If you haven’t installed vcpkg yet:
+If you haven't installed vcpkg yet:
 
 ```sh
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg
-.ootstrap-vcpkg.bat
+./bootstrap-vcpkg
 ```
 
 *(You only need to do this once per machine!)*
 
 Return to the `AlgoAss2` folder when done.
 
-### 3. Install Dependencies
-
-From your `AlgoAss2` directory, run:
-
-```sh
-C:\path	ocpkgcpkg install
-```
-or, if prompted, use the correct triplet:
-
-```sh
-C:\path	ocpkgcpkg install --triplet x64-windows
-```
-
-- vcpkg will automatically install all required libraries (including OpenCV and pkgconf).
-
-### 4. Build the Project
+### 3. Build the Project
 
 Simply run the provided batch file:
 
@@ -63,7 +48,7 @@ Simply run the provided batch file:
 ```
 This will configure and build the project with CMake and vcpkg.
 
-### 5. Run the Application
+### 4. Run the Application
 
 After building, start the program using:
 
