@@ -38,7 +38,7 @@ jobs:
         run: cmake --build build --config Release --parallel
 
       - name: Run Project
-        run: build\Release\seam_carving.exe 
+        run: seam_carving.exe image.png 300 200
 
       # Optional: clean/build/run scripts, only if you need them for extras
       # - name: "Clean Windows"
