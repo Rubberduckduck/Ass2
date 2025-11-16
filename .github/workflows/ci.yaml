@@ -44,7 +44,7 @@ jobs:
             Start-Sleep -Seconds 30
             Stop-Process -Id $p.Id -ErrorAction SilentlyContinue
             Write-Host "Killed process ID $($p.Id) after 30s"
-          shell: pwsh
+        shell: pwsh
 
       - name: Run Project in greedy programming
         run: |
