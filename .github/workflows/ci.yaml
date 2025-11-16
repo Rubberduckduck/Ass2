@@ -37,8 +37,11 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel
 
-      - name: Run Project
-        run: seam_carving.exe image.png 300 200
+      - name: Run Project in dynamic programming
+        run:  ./seam_carving.exe ../../input.jpg 200 300 dp
+      
+      - name: Run Project in dynamic programming
+        run:  ./seam_carving.exe ../../input.jpg 200 300 gp
 
       # Optional: clean/build/run scripts, only if you need them for extras
       # - name: "Clean Windows"

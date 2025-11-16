@@ -90,4 +90,5 @@ out*/
 *.swp
 /vcpkg/
 /vcpkg_installed/
+*.jpg
 
