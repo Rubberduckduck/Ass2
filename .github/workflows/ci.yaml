@@ -40,12 +40,20 @@ jobs:
       - name: Run Project in dynamic programming
         run: |
           cd build/Release
-          ./seam_carving.exe ../../input.jpg 200 300 dp
+          $p = Start-Process ./seam_carving.exe -ArgumentList "../../input.jpg", "200", "300", "dp" -PassThru
+            Start-Sleep -Seconds 30
+            Stop-Process -Id $p.Id -ErrorAction SilentlyContinue
+            Write-Host "Killed process ID $($p.Id) after 30s"
+          shell: pwsh
 
       - name: Run Project in greedy programming
         run: |
           cd build/Release
-          ./seam_carving.exe ../../input.jpg 200 300 gp
+          $p = Start-Process ./seam_carving.exe -ArgumentList "../../input.jpg", "200", "300", "gp" -PassThru
+          Start-Sleep -Seconds 30
+          Stop-Process -Id $p.Id -ErrorAction SilentlyContinue
+          Write-Host "Killed process ID $($p.Id) after 30s"
+        shell: pwsh
 
       # Optional: clean/build/run scripts, only if you need them for extras
       # - name: "Clean Windows"
