@@ -312,6 +312,14 @@ public:
 };
 
 int main(int argc, char** argv) {
+
+    // Check environment variable to disable GUI
+    bool showDisplay = true;
+    const char* noDisplay = std::getenv("SEAM_CARVING_NO_DISPLAY");
+    if (noDisplay != nullptr && std::string(noDisplay) == "1") {
+        showDisplay = false;
+    }
+    
     if (argc < 4) {
         std::cout << "Usage: " << argv[0] << " <input_image> <target_width> <target_height> [method]" << std::endl;
         std::cout << "Method: 'dp' (default) or 'gp (greedy programming)'" << std::endl;
