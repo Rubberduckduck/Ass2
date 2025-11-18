@@ -13,11 +13,11 @@ if not "%~1"=="" (
 )
 
 :: Prompt for dimensions and method
-set /p TARGET_WIDTH=Enter target width (default: 200): 
-if "%TARGET_WIDTH%"=="" set "TARGET_WIDTH=200"
+set /p TARGET_WIDTH=Enter target width (default: 600): 
+if "%TARGET_WIDTH%"=="" set "TARGET_WIDTH=600"
 
-set /p TARGET_HEIGHT=Enter target height (default: 200): 
-if "%TARGET_HEIGHT%"=="" set "TARGET_HEIGHT=200"
+set /p TARGET_HEIGHT=Enter target height (default: 400): 
+if "%TARGET_HEIGHT%"=="" set "TARGET_HEIGHT=400"
 
 set /p METHOD=Enter method - dp/gp (default: dp): 
 if "%METHOD%"=="" set "METHOD=dp"
